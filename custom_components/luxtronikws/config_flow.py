@@ -25,12 +25,16 @@ async def getWebsocket(server, password: str):
         await websocket.send("LOGIN;"+password)
         try:
             result = await websocket.recv()
+            ''' AH Start'''
+            result=result.replace('<?xml version="1.0"?>', '')
+            ''' AH End'''
             if not result.startswith("<Navigation id="):
+                _LOGGER.critical(result)
                 _LOGGER.critical("luxtronik login response is unknown")
                 return None, None, True, False
 
             root = ET.fromstring(result)
-            if len(root) < 5:
+            if len(root) > 5:
                 _LOGGER.critical("wrong password")
                 return None, None, True, False
 
